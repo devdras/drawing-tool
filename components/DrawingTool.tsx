@@ -17,8 +17,8 @@ export interface DrawingToolRef {
   getImageData: () => string | null;
 }
 
-const CANVAS_WIDTH = 2000;
-const CANVAS_HEIGHT = 1500;
+const CANVAS_WIDTH = 600;
+const CANVAS_HEIGHT = 600;
 const BORDER_SIZE = 20; // Size of white border around the drawn area
 
 const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
@@ -414,7 +414,7 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
   }));
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4">
+    <div className="w-full max-w-2xl mx-auto p-4">
       <div className="mb-4 flex flex-wrap gap-4 items-center">
         <BrushSizePicker value={brushSize} onChange={setBrushSize} />
 
@@ -459,7 +459,7 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
       </div>
       <div
         ref={viewportRef}
-        className="relative w-full aspect-[4/3] overflow-hidden border-4 border-gray-400 rounded-lg"
+        className="relative w-3/4 aspect-square overflow-hidden border-2 border-gray-400 rounded-lg bg-slate-300 overscroll-none"
         onPointerDown={isPanMode ? startPanning : startDrawing}
         onPointerMove={isPanMode ? pan : draw}
         onPointerUp={isPanMode ? stopPanning : stopDrawing}
