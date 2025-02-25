@@ -414,7 +414,7 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
   }));
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4">
+    <div className="w-full max-w-2xl mx-auto p-4 overscroll-none">
       <div className="mb-4 flex flex-wrap gap-4 items-center">
         <BrushSizePicker value={brushSize} onChange={setBrushSize} />
 
@@ -459,7 +459,7 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
       </div>
       <div
         ref={viewportRef}
-        className="relative w-3/4 aspect-square overflow-hidden border-2 border-gray-400 rounded-lg bg-slate-300 overscroll-none"
+        className="relative w-full aspect-square overflow-hidden border-2 border-gray-400 rounded-lg bg-slate-300 overscroll-none overscroll-contain"
         onPointerDown={isPanMode ? startPanning : startDrawing}
         onPointerMove={isPanMode ? pan : draw}
         onPointerUp={isPanMode ? stopPanning : stopDrawing}
