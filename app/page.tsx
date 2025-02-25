@@ -7,7 +7,7 @@ export default function Page() {
   const drawingRef = useRef<DrawingToolRef>(null);
 
   return (
-    <div className="max-h-screen flex flex-col items-center justify-center w-full overscroll-none">
+    <div className="max-h-screen flex flex-col items-center justify-center w-full overscroll-contain">
       <DrawingTool ref={drawingRef} />
     </div>
   );
