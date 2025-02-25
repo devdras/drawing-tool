@@ -21,7 +21,7 @@ const CANVAS_WIDTH = 2000;
 const CANVAS_HEIGHT = 1500;
 const BORDER_SIZE = 20; // Size of white border around the drawn area
 
-const DrawingComponent = forwardRef<DrawingToolRef, {}>((_, ref) => {
+const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
@@ -271,7 +271,7 @@ const DrawingComponent = forwardRef<DrawingToolRef, {}>((_, ref) => {
       const canvasCenterX = (viewportCenterX - panOffset.x) / scale;
       const canvasCenterY = (viewportCenterY - panOffset.y) / scale; // Calculate the new scale
       const newScale = Math.min(Math.max(scale + delta * 0.1, 0.1), 3);
-      const scaleFactor = newScale / scale; // Calculate the new offset to keep the center point at the same position
+      //const scaleFactor = newScale / scale; // Calculate the new offset to keep the center point at the same position
       const newOffsetX = viewportCenterX - canvasCenterX * newScale;
       const newOffsetY = viewportCenterY - canvasCenterY * newScale;
 
@@ -358,7 +358,7 @@ const DrawingComponent = forwardRef<DrawingToolRef, {}>((_, ref) => {
     const viewport = viewportRef.current;
 
     if (canvas && ctx && viewport) {
-      const dpr = window.devicePixelRatio || 1;
+      //const dpr = window.devicePixelRatio || 1;
 
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Re-center the canvas
@@ -481,4 +481,6 @@ const DrawingComponent = forwardRef<DrawingToolRef, {}>((_, ref) => {
   );
 });
 
-export default DrawingComponent;
+DrawingTool.displayName = "DrawingTool";
+
+export default DrawingTool;

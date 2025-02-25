@@ -47,11 +47,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange }) => {
     };
   }, [isOpen]);
 
-  const calculateColumns = () => {
-    const colorCount = colors.length;
-    return Math.ceil(Math.sqrt(colorCount));
-  };
-
   const getMenuPosition = () => {
     if (!buttonRef.current) return { top: 0, left: 0 };
     const rect = buttonRef.current.getBoundingClientRect();
