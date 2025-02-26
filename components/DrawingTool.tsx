@@ -299,12 +299,29 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
   const getCanvasData = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas && ctx) {
-      const minX = Math.max(0, drawBounds.minX - BORDER_SIZE);
-      const minY = Math.max(0, drawBounds.minY - BORDER_SIZE);
-      const maxX = Math.min(canvas.width, drawBounds.maxX + BORDER_SIZE);
-      const maxY = Math.min(canvas.height, drawBounds.maxY + BORDER_SIZE);
+      const dpr = window.devicePixelRatio || 1;
+
+      // Expand drawBounds more conservatively
+      const minX = Math.max(
+        0 - BORDER_SIZE,
+        Math.round(drawBounds.minX - BORDER_SIZE * 2)
+      );
+      const minY = Math.max(
+        0 - BORDER_SIZE,
+        Math.round(drawBounds.minY - BORDER_SIZE * 2)
+      );
+      const maxX = Math.min(
+        canvas.width,
+        Math.round(drawBounds.maxX + BORDER_SIZE * 2)
+      );
+      const maxY = Math.min(
+        canvas.height,
+        Math.round(drawBounds.maxY + BORDER_SIZE * 2)
+      );
+
       const width = maxX - minX;
       const height = maxY - minY;
+
       if (
         width <= 0 ||
         height <= 0 ||
@@ -314,27 +331,77 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
         alert("There's nothing to save. Please draw something first.");
         return;
       }
-      const saveCanvas = document.createElement("canvas");
-      const dpr = window.devicePixelRatio || 1;
 
-      saveCanvas.width = width * dpr;
-      saveCanvas.height = height * dpr;
+      // Get image data of the drawing area
+      const imageData = ctx.getImageData(
+        minX * dpr,
+        minY * dpr,
+        width * dpr,
+        height * dpr
+      );
+      const data = imageData.data;
+
+      // Find the actual bounding box of non-white pixels
+      let actualMinX = width;
+      let actualMinY = height;
+      let actualMaxX = 0;
+      let actualMaxY = 0;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const i = (y * width + x) * 4;
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          // Check if pixel is non-white
+          if (r !== 255 || g !== 255 || b !== 255) {
+            actualMinX = Math.min(actualMinX, x);
+            actualMinY = Math.min(actualMinY, y);
+            actualMaxX = Math.max(actualMaxX, x);
+            actualMaxY = Math.max(actualMaxY, y);
+          }
+        }
+      }
+
+      // Adjust for border
+      actualMinX = Math.max(0, actualMinX - BORDER_SIZE);
+      actualMinY = Math.max(0, actualMinY - BORDER_SIZE);
+      actualMaxX = Math.min(width, actualMaxX + BORDER_SIZE);
+      actualMaxY = Math.min(height, actualMaxY + BORDER_SIZE);
+
+      const actualWidth = actualMaxX - actualMinX;
+      const actualHeight = actualMaxY - actualMinY;
+
+      if (actualWidth <= 0 || actualHeight <= 0) {
+        alert("There's nothing to save. Please draw something first.");
+        return;
+      }
+
+      const saveCanvas = document.createElement("canvas");
+
+      saveCanvas.width = actualWidth;
+      saveCanvas.height = actualHeight;
+
       const saveCtx = saveCanvas.getContext("2d", { alpha: false });
+
       if (saveCtx) {
-        saveCtx.scale(dpr, dpr);
         saveCtx.fillStyle = "white";
-        saveCtx.fillRect(0, 0, width, height);
+        saveCtx.fillRect(0, 0, actualWidth, actualHeight);
+
+        // Draw the cropped portion of the original canvas onto the save canvas
         saveCtx.drawImage(
           canvas,
-          minX,
-          minY,
-          width,
-          height,
-          0,
-          0,
-          width,
-          height
+          (minX + actualMinX) * dpr, // Source x (account for DPR)
+          (minY + actualMinY) * dpr, // Source y (account for DPR)
+          actualWidth * dpr, // Source width (account for DPR)
+          actualHeight * dpr, // Source height (account for DPR)
+          0, // Destination x
+          0, // Destination y
+          actualWidth, // Destination width
+          actualHeight // Destination height
         );
+
         return saveCanvas;
       }
     }
