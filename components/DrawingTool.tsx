@@ -413,20 +413,15 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
   return (
     <div className="w-full max-w-2xl mx-auto p-4 overscroll-contain">
       <div className="mb-4 flex flex-wrap gap-4 items-center">
-        <BrushSizePicker value={brushSize} onChange={setBrushSize} />
-        <ColourPicker value={brushColour} onChange={setBrushColour} />
         <button
           onClick={saveCanvas}
           className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center"
         >
           <Save className="w-6 h-6" />
         </button>
-        <button
-          onClick={resetCanvas}
-          className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center"
-        >
-          <RotateCcw className="w-6 h-6" />
-        </button>
+        <BrushSizePicker value={brushSize} onChange={setBrushSize} />
+        <ColourPicker value={brushColour} onChange={setBrushColour} />
+
         <button
           onClick={() => handleZoom(-1)}
           className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center"
@@ -468,6 +463,12 @@ const DrawingTool = forwardRef<DrawingToolRef, {}>((_, ref) => {
               historyIndex >= history.length - 1 ? "text-gray-300" : ""
             }`}
           />
+        </button>
+        <button
+          onClick={resetCanvas}
+          className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center"
+        >
+          <RotateCcw className="w-6 h-6" />
         </button>
       </div>
       <div
